@@ -1,16 +1,20 @@
 {
   "session_id": "sample_005",
-  "title": "Internship Search Help",
-  "submitted_at": "2026-03-12T09:20:00Z",
-  "message_count": 8,
+  "title": "Final Project Planning",
+  "submitted_at": "2026-11-02T15:20:00Z",
+  "message_count": 10,
   "messages": [
-    {"role": "user", "content": "I'm a junior in informatics and I really need to find a summer internship. Can you help?", "timestamp": "2026-03-12T09:15:00Z"},
-    {"role": "agent", "content": "Of course! The UW Career & Internship Center is a great starting point. Have you set up a profile on Handshake? It's UW's main job and internship platform, and tons of companies recruit directly through it.", "timestamp": "2026-03-12T09:15:05Z"},
-    {"role": "user", "content": "Yeah I have a Handshake account but I haven't really used it much. Any tips?", "timestamp": "2026-03-12T09:16:00Z"},
-    {"role": "agent", "content": "Fill out your profile completely — employers filter by major, skills, and GPA. Set up job alerts for 'software intern' or 'data analyst intern.' Also attend the virtual career fairs that UW hosts — the spring one is coming up next month.", "timestamp": "2026-03-12T09:16:05Z"},
-    {"role": "user", "content": "What about my resume? I feel like it's not great.", "timestamp": "2026-03-12T09:17:00Z"},
-    {"role": "agent", "content": "The Career Center offers free resume reviews — you can book a 30-minute appointment online. They also have resume templates on their website specifically for tech and informatics roles. Focus on projects and skills rather than just coursework.", "timestamp": "2026-03-12T09:17:05Z"},
-    {"role": "user", "content": "Do companies come to campus to recruit?", "timestamp": "2026-03-12T09:19:00Z"},
-    {"role": "agent", "content": "Yes! Many big tech companies like Amazon, Microsoft, and Google recruit heavily at UW. The iSchool also hosts its own networking events. Check the Career Center events calendar and the iSchool newsletter for upcoming info sessions and recruiting events.", "timestamp": "2026-03-12T09:20:00Z"}
+    {"role": "user", "content": "My team is trying to pick a topic for our final project. What are the requirements again?", "timestamp": "2026-11-02T15:10:00Z"},
+    {"role": "agent", "content": "The final project requires your team to design and implement a cloud-native application on GCP that solves a real-world problem. You need to use at least five different GCP services, implement CI/CD with Cloud Build, include monitoring and logging, write Infrastructure as Code for at least three services, include a security analysis, and provide a cost estimate for running it at production scale.", "timestamp": "2026-11-02T15:10:12Z"},
+    {"role": "user", "content": "Five services seems like a lot. What counts?", "timestamp": "2026-11-02T15:11:00Z"},
+    {"role": "agent", "content": "It's easier than you think! For example, you might use Cloud Run for your compute, Cloud Storage for static assets, BigQuery for analytics, Pub/Sub for messaging, and Vertex AI for an ML feature. Cloud Build for CI/CD would be a sixth. Cloud Monitoring and Cloud Logging would also count. So just by building a reasonably complete app, you'll naturally hit five services.", "timestamp": "2026-11-02T15:11:12Z"},
+    {"role": "user", "content": "Do you have any ideas for what kind of app we could build?", "timestamp": "2026-11-02T15:13:00Z"},
+    {"role": "agent", "content": "Some past project examples from Dr. Chen include a real-time air quality monitoring dashboard using IoT data with Pub/Sub, BigQuery, and Looker Studio. Another team built an image-based plant disease detection app using Vertex AI AutoML and Cloud Run. There was also a campus shuttle tracking app using Maps API, Firestore, and Cloud Run. Think about problems you encounter as students or something you're passionate about and figure out how GCP services can solve it.", "timestamp": "2026-11-02T15:13:15Z"},
+    {"role": "user", "content": "We were thinking about building a study group matching app for UW students. Would that work?", "timestamp": "2026-11-02T15:15:00Z"},
+    {"role": "agent", "content": "That's a fantastic idea! You could use Cloud Run to host the backend API, Firestore or Cloud SQL for user profiles and group data, Pub/Sub to send notifications when matches are found, maybe Vertex AI to do smart matching based on study preferences and schedules, and Cloud Storage for any uploaded materials. Add Cloud Build for CI/CD and Cloud Monitoring, and you've easily hit the service requirement. That's very practical and the graders would love the UW angle.", "timestamp": "2026-11-02T15:15:15Z"},
+    {"role": "user", "content": "When is the proposal due?", "timestamp": "2026-11-02T15:18:00Z"},
+    {"role": "agent", "content": "The project proposal is due Week 5, Thursday by eleven fifty-nine PM Pacific. Then there's a five-minute check-in presentation during your lab section in Week 8. The final submission is due Week 10, Thursday by nine AM — that's before class because you'll be presenting that day. Each team gets fifteen minutes to present plus five minutes for Q and A. The whole project is worth 150 points, making it the single biggest component of your grade.", "timestamp": "2026-11-02T15:18:12Z"},
+    {"role": "user", "content": "Is it true there are peer evaluations?", "timestamp": "2026-11-02T15:19:30Z"},
+    {"role": "agent", "content": "Yes, each team member submits a peer evaluation form after the presentation. It's used to make sure everyone contributed equitably. If someone didn't pull their weight, their individual grade can be adjusted down. So make sure you divide the work fairly and keep communicating with your teammates. I'd recommend using a shared GitHub repository from day one so contributions are tracked.", "timestamp": "2026-11-02T15:20:00Z"}
   ]
 }

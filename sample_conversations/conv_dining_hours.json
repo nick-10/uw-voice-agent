@@ -1,14 +1,20 @@
 {
   "session_id": "sample_003",
-  "title": "Campus Dining Hours",
-  "submitted_at": "2026-03-11T11:30:00Z",
-  "message_count": 6,
+  "title": "Midterm Exam Prep",
+  "submitted_at": "2026-11-16T16:15:00Z",
+  "message_count": 10,
   "messages": [
-    {"role": "user", "content": "What time does the HFS dining hall close tonight?", "timestamp": "2026-03-11T11:27:00Z"},
-    {"role": "agent", "content": "Most HFS dining halls close at 8 PM on weeknights. Local Point in Lander Hall is open until 11 PM if you need a late option. Which residence hall are you closest to?", "timestamp": "2026-03-11T11:27:05Z"},
-    {"role": "user", "content": "I'm in McMahon. Is there food there?", "timestamp": "2026-03-11T11:28:00Z"},
-    {"role": "agent", "content": "Yes! McMahon Hall has a dining area on the ground floor. It's typically open for breakfast from 7 to 10 AM, lunch from 11 AM to 2 PM, and dinner from 5 to 8 PM on weekdays.", "timestamp": "2026-03-11T11:28:05Z"},
-    {"role": "user", "content": "What about weekends?", "timestamp": "2026-03-11T11:29:00Z"},
-    {"role": "agent", "content": "Weekend hours are usually brunch from 10 AM to 2 PM and dinner from 5 to 7 PM. Hours can vary during finals week and breaks, so I'd recommend checking the HFS website or the UW Food app for the most current info.", "timestamp": "2026-03-11T11:30:00Z"}
+    {"role": "user", "content": "The midterm is next week and I'm kind of freaking out. What's on it?", "timestamp": "2026-11-16T16:05:00Z"},
+    {"role": "agent", "content": "Don't worry, let's break it down! The midterm covers Weeks 1 through 7. That's cloud fundamentals, Compute Engine, Cloud Storage, IAM, BigQuery, GKE, Cloud Functions, and Pub/Sub. The format is 30 multiple-choice questions worth 2 points each, 3 short-answer questions worth 8 points each, and 1 architecture design question worth 16 points. Total is 100 points and you have 110 minutes.", "timestamp": "2026-11-16T16:05:12Z"},
+    {"role": "user", "content": "Can I bring notes?", "timestamp": "2026-11-16T16:06:00Z"},
+    {"role": "agent", "content": "Yes! You're allowed one eight-and-a-half by eleven inch reference sheet, handwritten or typed, and you can use both sides. No internet access or electronic devices during the exam though. I'd recommend focusing your cheat sheet on gcloud commands, service comparisons, and architecture patterns since those are hard to memorize.", "timestamp": "2026-11-16T16:06:08Z"},
+    {"role": "user", "content": "What should I focus on for IAM? That section confused me.", "timestamp": "2026-11-16T16:08:00Z"},
+    {"role": "agent", "content": "For IAM, the key concepts are the three types of roles — basic, predefined, and custom. Basic roles like Owner, Editor, and Viewer are too broad for production, so you should understand when to use predefined roles instead. Know the difference between service accounts that are user-managed versus Google-managed, and understand the principle of least privilege. Also make sure you understand how policy inheritance works in the resource hierarchy — from organization down to folder, project, and then individual resources.", "timestamp": "2026-11-16T16:08:15Z"},
+    {"role": "user", "content": "What about Kubernetes? That felt really complicated.", "timestamp": "2026-11-16T16:10:00Z"},
+    {"role": "agent", "content": "For the midterm, focus on the big concepts rather than all the YAML details. Know what pods, nodes, and clusters are. Understand the control plane components — the API server, scheduler, controller manager, and etcd. Know the difference between GKE Autopilot and Standard mode. Understand Deployments, Services, and the difference between ClusterIP, NodePort, and LoadBalancer service types. And know what Horizontal Pod Autoscaler does. You don't need to write perfect YAML from memory, but you should understand what each part of a deployment manifest does.", "timestamp": "2026-11-16T16:10:18Z"},
+    {"role": "user", "content": "Any tips for the architecture design question?", "timestamp": "2026-11-16T16:13:00Z"},
+    {"role": "agent", "content": "For the architecture question, think about the whole stack. Start with what compute option makes sense, consider networking and security, think about storage and data flow, and always mention high availability — like spreading across multiple zones. Draw a clear diagram if you can, label the GCP services you'd use, and explain why you chose each one. The graders are looking for justification of your choices, not just listing services. Also mention cost considerations — Professor Chen really values that.", "timestamp": "2026-11-16T16:13:15Z"},
+    {"role": "user", "content": "This is really helpful. Where's the exam again?", "timestamp": "2026-11-16T16:14:30Z"},
+    {"role": "agent", "content": "The midterm is Week 8, Tuesday, during regular class time — so ten thirty AM to twelve twenty PM in Mary Gates Hall Room 258. Make sure you bring your reference sheet and something to write with. You've got this! If you want to do some extra studying, Dr. Chen's office hours are Tuesdays from one to two thirty and Thursdays from two to three in her office in Mary Gates Hall Room 370E.", "timestamp": "2026-11-16T16:15:00Z"}
   ]
 }

@@ -1,14 +1,20 @@
 {
   "session_id": "sample_006",
-  "title": "Advising Appointment",
-  "submitted_at": "2026-03-12T13:05:00Z",
-  "message_count": 6,
+  "title": "Grading and Late Policy",
+  "submitted_at": "2026-10-20T11:30:00Z",
+  "message_count": 10,
   "messages": [
-    {"role": "user", "content": "How do I schedule an advising appointment? I need to talk about switching my major.", "timestamp": "2026-03-12T13:00:00Z"},
-    {"role": "agent", "content": "You can schedule an advising appointment through your department's advising page. What's your current major? That'll help me point you to the right office.", "timestamp": "2026-03-12T13:00:05Z"},
-    {"role": "user", "content": "I'm currently in pre-sciences but I want to switch to computer science.", "timestamp": "2026-03-12T13:01:00Z"},
-    {"role": "agent", "content": "For CS at UW, you'll need to apply through the competitive admission process to the Allen School. I'd recommend meeting with both a pre-major advisor in Arts & Sciences and attending a CSE advising drop-in session. The Allen School has walk-in advising hours on Tuesdays and Thursdays from 1 to 4 PM in the Gates Center.", "timestamp": "2026-03-12T13:01:05Z"},
-    {"role": "user", "content": "What GPA do I need to get into the CS major?", "timestamp": "2026-03-12T13:03:00Z"},
-    {"role": "agent", "content": "The Allen School looks at your overall application holistically, but competitive applicants typically have a 3.5 or higher in the prerequisite courses like CSE 142, CSE 143, and the math sequence. They also consider personal statements and diversity contributions. Check the Allen School admissions page for the most current requirements and deadlines.", "timestamp": "2026-03-12T13:05:00Z"}
+    {"role": "user", "content": "Hey, I might not be able to submit Homework 2 on time because I've been sick. What's the late policy?", "timestamp": "2026-10-20T11:20:00Z"},
+    {"role": "agent", "content": "Sorry to hear you've been sick! So the late policy is that assignments submitted up to 24 hours late get a 10 percent penalty, and 24 to 48 hours late is a 25 percent penalty. Anything more than 48 hours late gets no credit. But here's the good news — you have two free late day tokens for the quarter. Each one extends a deadline by 24 hours with no penalty. You just need to email the TA before the deadline to use one.", "timestamp": "2026-10-20T11:20:12Z"},
+    {"role": "user", "content": "Oh nice, I didn't know about the tokens. I haven't used any yet. Who do I email?", "timestamp": "2026-10-20T11:21:00Z"},
+    {"role": "agent", "content": "Email the TA — that would be Marcus at mrivera.ta@uw.edu or Priya at ppatel.ta@uw.edu. Just let them know before the deadline that you want to use a late day token for Homework 2. Homework 2 is the IAM Policy Design assignment, due Week 6 Thursday by eleven fifty-nine PM Pacific, so make sure you email before then.", "timestamp": "2026-10-20T11:21:10Z"},
+    {"role": "user", "content": "Got it. How much is Homework 2 worth?", "timestamp": "2026-10-20T11:23:00Z"},
+    {"role": "agent", "content": "Homework 2 is worth 50 points, same as all the homework assignments. You need to submit an IAM policy document as a PDF with role definitions, a resource hierarchy diagram, and a security analysis. The scenario involves designing an IAM strategy for a mid-size company with development, QA, operations, data science, and management teams.", "timestamp": "2026-10-20T11:23:08Z"},
+    {"role": "user", "content": "Can you remind me what the overall grade breakdown is?", "timestamp": "2026-10-20T11:25:00Z"},
+    {"role": "agent", "content": "Sure! The five homework assignments together are worth 250 points, which is about 31 percent of your grade. The six required labs are 160 points, about 20 percent. The midterm is 100 points at 12 and a half percent. The final project is 150 points at about 19 percent. Participation and discussion is 50 points at about 6 percent. And the final exam is 90 points at about 11 percent. The total is 800 points. There are also two bonus labs worth 15 points each if you want extra credit.", "timestamp": "2026-10-20T11:25:15Z"},
+    {"role": "user", "content": "What grade do I need for a B?", "timestamp": "2026-10-20T11:28:00Z"},
+    {"role": "agent", "content": "For a B, you need 83 to 86 percent. On 800 total points, that works out to roughly 664 to 688 points. A B minus is 80 to 82 percent, and a B plus is 87 to 89 percent. If you do well on the homework assignments, labs, and the final project, and at least pass the exams, you should be in good shape for a B or higher.", "timestamp": "2026-10-20T11:28:10Z"},
+    {"role": "user", "content": "Thanks so much, I feel better now. I'll email Marcus about the late token.", "timestamp": "2026-10-20T11:29:30Z"},
+    {"role": "agent", "content": "You're welcome! I hope you feel better soon. And remember, if you need more help while you're catching up, office hours are a great option. Dr. Chen is available Tuesdays from one to two thirty and Thursdays from two to three. Marcus is on Mondays from three to five, and Priya is Wednesdays from one to three. Take care of yourself!", "timestamp": "2026-10-20T11:30:00Z"}
   ]
 }

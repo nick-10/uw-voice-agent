@@ -1,16 +1,18 @@
 {
   "session_id": "sample_004",
-  "title": "Library Research Help",
-  "submitted_at": "2026-03-11T15:10:00Z",
+  "title": "GKE Lab Troubleshooting",
+  "submitted_at": "2026-11-10T22:40:00Z",
   "message_count": 8,
   "messages": [
-    {"role": "user", "content": "How do I access research databases from off campus?", "timestamp": "2026-03-11T15:05:00Z"},
-    {"role": "agent", "content": "You can access UW Libraries' databases from off campus by using the UW Libraries proxy. Just go to lib.uw.edu, find your database, and log in with your UW NetID. You can also use the Husky OnNet VPN for seamless access.", "timestamp": "2026-03-11T15:05:05Z"},
-    {"role": "user", "content": "I need to find peer-reviewed articles for my psychology paper. Which database is best?", "timestamp": "2026-03-11T15:06:00Z"},
-    {"role": "agent", "content": "For psychology, I'd recommend PsycINFO — it's the gold standard for psych research. You can also try Google Scholar linked through UW Libraries for broader searches. Both let you filter for peer-reviewed articles.", "timestamp": "2026-03-11T15:06:05Z"},
-    {"role": "user", "content": "Can I get help with my citations? I'm using APA format and it's confusing.", "timestamp": "2026-03-11T15:07:00Z"},
-    {"role": "agent", "content": "Absolutely! The UW Writing Center offers free citation help. You can also use the Purdue OWL website for APA guidelines. If you want an automated tool, Zotero is free for UW students and can generate APA citations from articles.", "timestamp": "2026-03-11T15:07:05Z"},
-    {"role": "user", "content": "Is Zotero better than the citation tool in Google Docs?", "timestamp": "2026-03-11T15:09:00Z"},
-    {"role": "agent", "content": "Zotero is much more powerful for academic work. It stores your entire library, syncs across devices, and handles complex citation formats better. It also has a browser extension that can grab citation info directly from database pages. I'd definitely recommend it for a research paper.", "timestamp": "2026-03-11T15:10:00Z"}
+    {"role": "user", "content": "I'm stuck on Lab 4. I created my GKE cluster but my pods keep crashing. Any idea what might be wrong?", "timestamp": "2026-11-10T22:30:00Z"},
+    {"role": "agent", "content": "That's a common issue! First, are you using GKE Autopilot or Standard mode? For this lab, Autopilot is recommended since Google manages the nodes for you. If your pods are crashing, check the pod logs using kubectl logs followed by the pod name. Also make sure your Docker image was pushed correctly to Artifact Registry — if the image isn't found, the pod will crash with an ImagePullBackOff error.", "timestamp": "2026-11-10T22:30:12Z"},
+    {"role": "user", "content": "I'm using Autopilot. How do I check the pod logs?", "timestamp": "2026-11-10T22:32:00Z"},
+    {"role": "agent", "content": "First run kubectl get pods to see all your pods and their status. Look for any with a CrashLoopBackOff or Error status. Then run kubectl logs with the pod name to see what error message the application is throwing. If the pod crashed and restarted, add the previous flag to see the logs from the previous run. Also try kubectl describe pod with the pod name — that gives you events and error details that are really helpful for debugging.", "timestamp": "2026-11-10T22:32:12Z"},
+    {"role": "user", "content": "It says the image can't be pulled. How do I push to Artifact Registry?", "timestamp": "2026-11-10T22:35:00Z"},
+    {"role": "agent", "content": "You need to tag your Docker image with the Artifact Registry path first. The format is your region dash docker dot pkg dot dev slash your project ID slash your repository name slash your image name colon tag. So first build your image, then tag it with that path, then run docker push with that full path. Make sure you've authenticated Docker with gcloud by running gcloud auth configure-docker followed by the registry hostname. If you haven't created an Artifact Registry repository yet, you'll need to do that first in the console or with gcloud.", "timestamp": "2026-11-10T22:35:15Z"},
+    {"role": "user", "content": "Oh I think I forgot to create the Artifact Registry repo. What's the command for that?", "timestamp": "2026-11-10T22:37:00Z"},
+    {"role": "agent", "content": "You can create one with the gcloud artifacts repositories create command. Specify the repository name, set the format to docker, and choose your location like us-west1. Once that's created, push your images there. Remember, in this lab you need images for three services — the React frontend, the Python Flask backend, and Redis. For Redis, you can just use the official Redis image from Docker Hub, you don't need to push that to Artifact Registry.", "timestamp": "2026-11-10T22:37:12Z"},
+    {"role": "user", "content": "Thanks! When is this lab due? I want to make sure I have enough time.", "timestamp": "2026-11-10T22:39:00Z"},
+    {"role": "agent", "content": "Lab 4 is due at the end of Week 8, so you still have some time. It's worth 30 points. You need to submit a GitHub repository with all your Dockerfiles and Kubernetes manifests, screenshots showing your running pods and services, and a brief write-up of the deployment process. If you're still stuck, Marcus has office hours on Mondays from three to five in CSE2 Room 153 — he's great with Kubernetes questions.", "timestamp": "2026-11-10T22:40:00Z"}
   ]
 }

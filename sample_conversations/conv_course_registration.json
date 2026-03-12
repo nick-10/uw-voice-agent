@@ -1,16 +1,16 @@
 {
   "session_id": "sample_001",
-  "title": "Course Registration",
-  "submitted_at": "2026-03-10T14:23:00Z",
+  "title": "Homework One Help",
+  "submitted_at": "2026-10-12T18:45:00Z",
   "message_count": 8,
   "messages": [
-    {"role": "user", "content": "Hey, I need help registering for CSE 142. How do I sign up?", "timestamp": "2026-03-10T14:20:00Z"},
-    {"role": "agent", "content": "Sure! To register for CSE 142, you'll want to log into MyUW, go to the Registration section, and search for CSE 142. You'll need to make sure you have no registration holds on your account first.", "timestamp": "2026-03-10T14:20:05Z"},
-    {"role": "user", "content": "How do I check if I have any holds?", "timestamp": "2026-03-10T14:20:30Z"},
-    {"role": "agent", "content": "In MyUW, click on 'Academics' and then 'Registration.' If you have any holds, they'll show up at the top with a red banner. Common holds include advising holds and tuition holds.", "timestamp": "2026-03-10T14:20:35Z"},
-    {"role": "user", "content": "I think I might have an advising hold. How do I clear that?", "timestamp": "2026-03-10T14:21:00Z"},
-    {"role": "agent", "content": "You'll need to meet with your academic advisor. You can schedule an appointment through the Advising office for your department. Once they mark it as complete, the hold should be lifted within 24 hours.", "timestamp": "2026-03-10T14:21:05Z"},
-    {"role": "user", "content": "Is CSE 142 usually full? Should I have a backup plan?", "timestamp": "2026-03-10T14:22:00Z"},
-    {"role": "agent", "content": "CSE 142 can fill up fast, especially in autumn quarter. I'd recommend having a backup section or adding yourself to the waitlist if your preferred section is full. You can also check Notify.UW to get alerts when a spot opens up.", "timestamp": "2026-03-10T14:23:00Z"}
+    {"role": "user", "content": "Hey, I'm working on Homework 1 and I'm not sure what machine types to pick for my architecture design. Can you help?", "timestamp": "2026-10-12T18:40:00Z"},
+    {"role": "agent", "content": "Of course! So for Homework 1, you're designing compute infrastructure for a hypothetical web application. The key is matching machine types to your workload. For a typical web app, E2 or N2 instances are usually a great fit. E2 is the most cost-effective for dev and test, while N2 gives you a better balance of price and performance for production workloads.", "timestamp": "2026-10-12T18:40:08Z"},
+    {"role": "user", "content": "What about if part of the app does image processing? Would I need something different?", "timestamp": "2026-10-12T18:41:00Z"},
+    {"role": "agent", "content": "Good thinking! For image processing, you'd want compute-optimized instances like the C2 family. They have the highest per-core performance, which is great for CPU-intensive workloads like batch processing or rendering. You could use C2 instances for the image processing tier and E2 or N2 for the web frontend. That kind of tiered approach is exactly what the homework is looking for.", "timestamp": "2026-10-12T18:41:10Z"},
+    {"role": "user", "content": "Got it. And the homework asks for a cost estimate. How do I figure that out?", "timestamp": "2026-10-12T18:42:00Z"},
+    {"role": "agent", "content": "Use the Google Cloud Pricing Calculator at cloud.google.com/products/calculator. You can plug in your machine types, the number of instances, hours per month, and it'll give you an estimate. Don't forget to factor in persistent disk costs too. Also mention in your write-up whether you're using preemptible or Spot VMs for any batch workloads — they can save you sixty to ninety percent over regular pricing.", "timestamp": "2026-10-12T18:42:12Z"},
+    {"role": "user", "content": "When is this due again?", "timestamp": "2026-10-12T18:44:00Z"},
+    {"role": "agent", "content": "Homework 1 is due Week 4, Thursday by eleven fifty-nine PM Pacific. It's worth 50 points. You need to submit an architecture diagram, a two-page written justification explaining your choices, and a cost estimate spreadsheet. Upload everything to Canvas. You still have a bit of time, but I'd recommend starting the diagram soon!", "timestamp": "2026-10-12T18:45:00Z"}
   ]
 }

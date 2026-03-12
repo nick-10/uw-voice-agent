@@ -1,14 +1,20 @@
 {
   "session_id": "sample_002",
-  "title": "Financial Aid Deadline",
-  "submitted_at": "2026-03-10T16:45:00Z",
-  "message_count": 6,
+  "title": "BigQuery Lab Questions",
+  "submitted_at": "2026-11-05T20:30:00Z",
+  "message_count": 10,
   "messages": [
-    {"role": "user", "content": "When is the FAFSA deadline for next year?", "timestamp": "2026-03-10T16:42:00Z"},
-    {"role": "agent", "content": "The federal FAFSA deadline is June 30th, but for UW's priority deadline, you'll want to submit by January 15th to be considered for the maximum amount of aid. The earlier you file, the better!", "timestamp": "2026-03-10T16:42:05Z"},
-    {"role": "user", "content": "I missed the priority deadline. Can I still get financial aid?", "timestamp": "2026-03-10T16:43:00Z"},
-    {"role": "agent", "content": "Yes, you can still submit your FAFSA! You may miss out on some institutional grants, but you'll still be considered for federal loans, Pell Grants, and work-study. I'd recommend submitting as soon as possible.", "timestamp": "2026-03-10T16:43:05Z"},
-    {"role": "user", "content": "What about scholarships? Where do I find those?", "timestamp": "2026-03-10T16:44:00Z"},
-    {"role": "agent", "content": "Check out the UW Scholarship Database at scholarships.uw.edu. You can filter by your major, year, and background. Many departmental scholarships have spring deadlines. Also look into the Husky Promise program if your family income is below a certain threshold.", "timestamp": "2026-03-10T16:45:00Z"}
+    {"role": "user", "content": "I'm starting Lab 3, the BigQuery data analysis project. What dataset am I supposed to use?", "timestamp": "2026-11-05T20:20:00Z"},
+    {"role": "agent", "content": "For Lab 3, you'll load a public dataset into BigQuery. The suggested one is the Chicago taxi trips dataset, but you can use a similar public dataset if you prefer. The key is that it needs to be large enough to demonstrate partitioning and clustering benefits.", "timestamp": "2026-11-05T20:20:08Z"},
+    {"role": "user", "content": "How do I create a partitioned table?", "timestamp": "2026-11-05T20:21:00Z"},
+    {"role": "agent", "content": "You can create a partitioned table using a CREATE TABLE statement with a PARTITION BY clause. For example, you'd partition by the date column in your data, like PARTITION BY DATE of your timestamp field. This way BigQuery only scans the partitions relevant to your query, which dramatically reduces cost and improves performance.", "timestamp": "2026-11-05T20:21:10Z"},
+    {"role": "user", "content": "What's the difference between partitioning and clustering?", "timestamp": "2026-11-05T20:22:00Z"},
+    {"role": "agent", "content": "Great question! Partitioning divides your table into segments based on a column value, usually a date. BigQuery can skip entire partitions that don't match your query filter. Clustering, on the other hand, sorts the data within each partition by the columns you specify. So if you cluster by user ID and event type, queries filtering on those columns will be much faster. You typically use both together — partition by date and cluster by your most-filtered columns.", "timestamp": "2026-11-05T20:22:12Z"},
+    {"role": "user", "content": "The lab also mentions BigQuery ML. Do I need to know a lot of machine learning for that?", "timestamp": "2026-11-05T20:25:00Z"},
+    {"role": "agent", "content": "Not at all! That's the beauty of BigQuery ML. You can train a model directly in SQL using a CREATE MODEL statement. For the lab, you're creating a linear regression model to predict trip duration. You just specify your model type, your label column, and your features in a SQL query. BigQuery handles all the ML complexity behind the scenes. It's a great way to get introduced to ML concepts without needing to write Python ML code.", "timestamp": "2026-11-05T20:25:12Z"},
+    {"role": "user", "content": "How many points is this lab worth?", "timestamp": "2026-11-05T20:28:00Z"},
+    {"role": "agent", "content": "Lab 3 is worth 30 points, which makes it one of the higher-value labs. You need to submit your SQL queries file, BigQuery ML model evaluation results, a Looker Studio dashboard with at least four visualizations, and a cost analysis document. It's due at the end of Week 7.", "timestamp": "2026-11-05T20:28:08Z"},
+    {"role": "user", "content": "Can I use Looker Studio for free?", "timestamp": "2026-11-05T20:29:30Z"},
+    {"role": "agent", "content": "Yes! Looker Studio is completely free to use. You just go to lookerstudio.google.com, sign in with your Google account, and connect it directly to your BigQuery dataset. It's really intuitive — you can drag and drop to create charts, tables, and filters. Just make sure you share the dashboard link when you submit so the TAs can view it.", "timestamp": "2026-11-05T20:30:00Z"}
   ]
 }
