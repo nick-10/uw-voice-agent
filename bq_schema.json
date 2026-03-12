@@ -1,0 +1,16 @@
+[
+  {"name": "session_id", "type": "STRING", "mode": "NULLABLE"},
+  {"name": "title", "type": "STRING", "mode": "NULLABLE"},
+  {"name": "submitted_at", "type": "STRING", "mode": "NULLABLE"},
+  {"name": "message_count", "type": "INTEGER", "mode": "NULLABLE"},
+  {
+    "name": "messages",
+    "type": "RECORD",
+    "mode": "REPEATED",
+    "fields": [
+      {"name": "role", "type": "STRING", "mode": "NULLABLE"},
+      {"name": "content", "type": "STRING", "mode": "NULLABLE"},
+      {"name": "timestamp", "type": "STRING", "mode": "NULLABLE"}
+    ]
+  }
+]

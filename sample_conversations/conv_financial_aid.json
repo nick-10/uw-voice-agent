@@ -1,0 +1,14 @@
+{
+  "session_id": "sample_002",
+  "title": "Financial Aid Deadline",
+  "submitted_at": "2026-03-10T16:45:00Z",
+  "message_count": 6,
+  "messages": [
+    {"role": "user", "content": "When is the FAFSA deadline for next year?", "timestamp": "2026-03-10T16:42:00Z"},
+    {"role": "agent", "content": "The federal FAFSA deadline is June 30th, but for UW's priority deadline, you'll want to submit by January 15th to be considered for the maximum amount of aid. The earlier you file, the better!", "timestamp": "2026-03-10T16:42:05Z"},
+    {"role": "user", "content": "I missed the priority deadline. Can I still get financial aid?", "timestamp": "2026-03-10T16:43:00Z"},
+    {"role": "agent", "content": "Yes, you can still submit your FAFSA! You may miss out on some institutional grants, but you'll still be considered for federal loans, Pell Grants, and work-study. I'd recommend submitting as soon as possible.", "timestamp": "2026-03-10T16:43:05Z"},
+    {"role": "user", "content": "What about scholarships? Where do I find those?", "timestamp": "2026-03-10T16:44:00Z"},
+    {"role": "agent", "content": "Check out the UW Scholarship Database at scholarships.uw.edu. You can filter by your major, year, and background. Many departmental scholarships have spring deadlines. Also look into the Husky Promise program if your family income is below a certain threshold.", "timestamp": "2026-03-10T16:45:00Z"}
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "session_id": "sample_005",
+  "title": "Internship Search Help",
+  "submitted_at": "2026-03-12T09:20:00Z",
+  "message_count": 8,
+  "messages": [
+    {"role": "user", "content": "I'm a junior in informatics and I really need to find a summer internship. Can you help?", "timestamp": "2026-03-12T09:15:00Z"},
+    {"role": "agent", "content": "Of course! The UW Career & Internship Center is a great starting point. Have you set up a profile on Handshake? It's UW's main job and internship platform, and tons of companies recruit directly through it.", "timestamp": "2026-03-12T09:15:05Z"},
+    {"role": "user", "content": "Yeah I have a Handshake account but I haven't really used it much. Any tips?", "timestamp": "2026-03-12T09:16:00Z"},
+    {"role": "agent", "content": "Fill out your profile completely — employers filter by major, skills, and GPA. Set up job alerts for 'software intern' or 'data analyst intern.' Also attend the virtual career fairs that UW hosts — the spring one is coming up next month.", "timestamp": "2026-03-12T09:16:05Z"},
+    {"role": "user", "content": "What about my resume? I feel like it's not great.", "timestamp": "2026-03-12T09:17:00Z"},
+    {"role": "agent", "content": "The Career Center offers free resume reviews — you can book a 30-minute appointment online. They also have resume templates on their website specifically for tech and informatics roles. Focus on projects and skills rather than just coursework.", "timestamp": "2026-03-12T09:17:05Z"},
+    {"role": "user", "content": "Do companies come to campus to recruit?", "timestamp": "2026-03-12T09:19:00Z"},
+    {"role": "agent", "content": "Yes! Many big tech companies like Amazon, Microsoft, and Google recruit heavily at UW. The iSchool also hosts its own networking events. Check the Career Center events calendar and the iSchool newsletter for upcoming info sessions and recruiting events.", "timestamp": "2026-03-12T09:20:00Z"}
+  ]
+}

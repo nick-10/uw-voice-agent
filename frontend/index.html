@@ -74,6 +74,22 @@
     }
     #stopBtn:hover { background: #ff6b6b; color: #fff; }
     #stopBtn:disabled { background: #2a2a2a; color: #555; cursor: not-allowed; }
+    #submitBtn {
+      width: 52px; height: 52px; border-radius: 50%; border: none;
+      background: #444; color: #e0e0e0; font-size: 1.2rem; cursor: pointer;
+      transition: all 0.2s; display: flex; align-items: center; justify-content: center;
+    }
+    #submitBtn:hover { background: #4caf50; color: #fff; }
+    #submitBtn:disabled { background: #2a2a2a; color: #555; cursor: not-allowed; }
+    #submitBtn.submitted { background: #2e7d32; color: #fff; }
+    .toast {
+      position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%);
+      background: #333; color: #e0e0e0; padding: 0.75rem 1.5rem; border-radius: 8px;
+      font-size: 0.85rem; z-index: 100; opacity: 0; transition: opacity 0.3s;
+    }
+    .toast.show { opacity: 1; }
+    .toast.success { border-left: 3px solid #4caf50; }
+    .toast.error { border-left: 3px solid #ff6b6b; }
     #status { font-size: 0.85rem; color: #888; min-height: 1.2em; margin-bottom: 1rem; }
     @keyframes pulse { 0%,100% { box-shadow: 0 0 0 0 rgba(76,175,80,0.4); } 50% { box-shadow: 0 0 0 15px rgba(76,175,80,0); } }
 
@@ -106,9 +122,11 @@
     <div id="controls">
       <button id="micBtn" class="mic-btn" onclick="toggleMic()">🎤</button>
       <button id="stopBtn" onclick="stopOutput()" disabled title="Stop audio output">⏹</button>
+      <button id="submitBtn" onclick="submitSession()" title="Submit conversation to analytics">📤</button>
     </div>
     <div id="status">Click mic to start conversation</div>
   </div>
+  <div id="toast" class="toast"></div>
 
   <script>
     let ws, audioCtx, workletNode, stream, micActive = false, agentSpeaking = false;
@@ -395,6 +413,46 @@
       // Close old WebSocket and reconnect (server will create a new session)
       if (ws) { ws.onclose = null; ws.close(); }
       connect();
+    }
+
+    // ─── Submit conversation ───
+    const submitBtn = document.getElementById('submitBtn');
+    const toastEl = document.getElementById('toast');
+
+    function showToast(message, type = 'success') {
+      toastEl.textContent = message;
+      toastEl.className = `toast show ${type}`;
+      setTimeout(() => { toastEl.className = 'toast'; }, 3000);
+    }
+
+    async function submitSession() {
+      const sid = currentSessionId;
+      if (!sid) { showToast('No active session to submit', 'error'); return; }
+
+      submitBtn.disabled = true;
+      submitBtn.textContent = '⏳';
+
+      try {
+        const res = await fetch(`/api/sessions/${sid}/submit`, { method: 'POST' });
+        const data = await res.json();
+        if (data.ok) {
+          submitBtn.classList.add('submitted');
+          submitBtn.textContent = '✅';
+          showToast('Conversation submitted to analytics!', 'success');
+        } else {
+          submitBtn.textContent = '📤';
+          showToast('Error: ' + (data.error || 'Unknown error'), 'error');
+        }
+      } catch (err) {
+        submitBtn.textContent = '📤';
+        showToast('Failed to submit: ' + err.message, 'error');
+      }
+
+      setTimeout(() => {
+        submitBtn.disabled = false;
+        submitBtn.classList.remove('submitted');
+        submitBtn.textContent = '📤';
+      }, 3000);
     }
 
     // ─── Init ───

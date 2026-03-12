@@ -1,0 +1,16 @@
+{
+  "session_id": "sample_004",
+  "title": "Library Research Help",
+  "submitted_at": "2026-03-11T15:10:00Z",
+  "message_count": 8,
+  "messages": [
+    {"role": "user", "content": "How do I access research databases from off campus?", "timestamp": "2026-03-11T15:05:00Z"},
+    {"role": "agent", "content": "You can access UW Libraries' databases from off campus by using the UW Libraries proxy. Just go to lib.uw.edu, find your database, and log in with your UW NetID. You can also use the Husky OnNet VPN for seamless access.", "timestamp": "2026-03-11T15:05:05Z"},
+    {"role": "user", "content": "I need to find peer-reviewed articles for my psychology paper. Which database is best?", "timestamp": "2026-03-11T15:06:00Z"},
+    {"role": "agent", "content": "For psychology, I'd recommend PsycINFO — it's the gold standard for psych research. You can also try Google Scholar linked through UW Libraries for broader searches. Both let you filter for peer-reviewed articles.", "timestamp": "2026-03-11T15:06:05Z"},
+    {"role": "user", "content": "Can I get help with my citations? I'm using APA format and it's confusing.", "timestamp": "2026-03-11T15:07:00Z"},
+    {"role": "agent", "content": "Absolutely! The UW Writing Center offers free citation help. You can also use the Purdue OWL website for APA guidelines. If you want an automated tool, Zotero is free for UW students and can generate APA citations from articles.", "timestamp": "2026-03-11T15:07:05Z"},
+    {"role": "user", "content": "Is Zotero better than the citation tool in Google Docs?", "timestamp": "2026-03-11T15:09:00Z"},
+    {"role": "agent", "content": "Zotero is much more powerful for academic work. It stores your entire library, syncs across devices, and handles complex citation formats better. It also has a browser extension that can grab citation info directly from database pages. I'd definitely recommend it for a research paper.", "timestamp": "2026-03-11T15:10:00Z"}
+  ]
+}

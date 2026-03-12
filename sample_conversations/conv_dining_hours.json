@@ -1,0 +1,14 @@
+{
+  "session_id": "sample_003",
+  "title": "Campus Dining Hours",
+  "submitted_at": "2026-03-11T11:30:00Z",
+  "message_count": 6,
+  "messages": [
+    {"role": "user", "content": "What time does the HFS dining hall close tonight?", "timestamp": "2026-03-11T11:27:00Z"},
+    {"role": "agent", "content": "Most HFS dining halls close at 8 PM on weeknights. Local Point in Lander Hall is open until 11 PM if you need a late option. Which residence hall are you closest to?", "timestamp": "2026-03-11T11:27:05Z"},
+    {"role": "user", "content": "I'm in McMahon. Is there food there?", "timestamp": "2026-03-11T11:28:00Z"},
+    {"role": "agent", "content": "Yes! McMahon Hall has a dining area on the ground floor. It's typically open for breakfast from 7 to 10 AM, lunch from 11 AM to 2 PM, and dinner from 5 to 8 PM on weekdays.", "timestamp": "2026-03-11T11:28:05Z"},
+    {"role": "user", "content": "What about weekends?", "timestamp": "2026-03-11T11:29:00Z"},
+    {"role": "agent", "content": "Weekend hours are usually brunch from 10 AM to 2 PM and dinner from 5 to 7 PM. Hours can vary during finals week and breaks, so I'd recommend checking the HFS website or the UW Food app for the most current info.", "timestamp": "2026-03-11T11:30:00Z"}
+  ]
+}

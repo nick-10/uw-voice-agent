@@ -1,9 +1,11 @@
 """FastAPI conversation controller — always-on mic with pause detection & interruption."""
 
-import asyncio, json, re, traceback
+import asyncio, json, os, re, traceback
 from contextlib import asynccontextmanager
+from datetime import datetime, timezone
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from fastapi.staticfiles import StaticFiles
+from google.cloud import storage as gcs
 from google.adk import Runner
 from google.adk.sessions import InMemorySessionService
 from google.genai import types
@@ -102,6 +104,43 @@ async def get_session_messages(session_id: str):
 async def delete_session(session_id: str):
     await db.delete_session(session_id)
     return {"ok": True}
+
+
+GCS_BUCKET = os.environ.get("GCS_CONVERSATION_BUCKET", "uw-voice-agent-conversations")
+
+@app.post("/api/sessions/{session_id}/submit")
+async def submit_session(session_id: str):
+    """Export conversation as JSON and upload to GCS bucket."""
+    messages = await db.get_messages(session_id)
+    if not messages:
+        return {"error": "No messages in this session"}, 400
+
+    sessions = await db.get_sessions(limit=200)
+    session_meta = next((s for s in sessions if s["session_id"] == session_id), {})
+
+    payload = {
+        "session_id": session_id,
+        "title": session_meta.get("title", "Untitled"),
+        "submitted_at": datetime.now(timezone.utc).isoformat(),
+        "message_count": len(messages),
+        "messages": messages,
+    }
+
+    blob_name = f"conversations/{session_id}.json"
+    try:
+        client = gcs.Client()
+        bucket = client.bucket(GCS_BUCKET)
+        blob = bucket.blob(blob_name)
+        blob.upload_from_string(
+            json.dumps(payload, default=str),
+            content_type="application/json",
+        )
+    except Exception as e:
+        traceback.print_exc()
+        return {"error": str(e)}
+
+    gcs_uri = f"gs://{GCS_BUCKET}/{blob_name}"
+    return {"ok": True, "gcs_uri": gcs_uri}
 
 
 # ─── WebSocket chat endpoint ────────────────────────────────────────────

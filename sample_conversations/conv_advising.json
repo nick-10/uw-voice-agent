@@ -1,0 +1,14 @@
+{
+  "session_id": "sample_006",
+  "title": "Advising Appointment",
+  "submitted_at": "2026-03-12T13:05:00Z",
+  "message_count": 6,
+  "messages": [
+    {"role": "user", "content": "How do I schedule an advising appointment? I need to talk about switching my major.", "timestamp": "2026-03-12T13:00:00Z"},
+    {"role": "agent", "content": "You can schedule an advising appointment through your department's advising page. What's your current major? That'll help me point you to the right office.", "timestamp": "2026-03-12T13:00:05Z"},
+    {"role": "user", "content": "I'm currently in pre-sciences but I want to switch to computer science.", "timestamp": "2026-03-12T13:01:00Z"},
+    {"role": "agent", "content": "For CS at UW, you'll need to apply through the competitive admission process to the Allen School. I'd recommend meeting with both a pre-major advisor in Arts & Sciences and attending a CSE advising drop-in session. The Allen School has walk-in advising hours on Tuesdays and Thursdays from 1 to 4 PM in the Gates Center.", "timestamp": "2026-03-12T13:01:05Z"},
+    {"role": "user", "content": "What GPA do I need to get into the CS major?", "timestamp": "2026-03-12T13:03:00Z"},
+    {"role": "agent", "content": "The Allen School looks at your overall application holistically, but competitive applicants typically have a 3.5 or higher in the prerequisite courses like CSE 142, CSE 143, and the math sequence. They also consider personal statements and diversity contributions. Check the Allen School admissions page for the most current requirements and deadlines.", "timestamp": "2026-03-12T13:05:00Z"}
+  ]
+}
