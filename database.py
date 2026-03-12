@@ -64,11 +64,14 @@ async def update_session_title(session_id: str, title: str):
 
 
 async def get_sessions(limit: int = 50) -> list[dict]:
-    """Return recent sessions, newest first."""
+    """Return recent sessions that have messages, newest first."""
     async with aiosqlite.connect(DB_PATH) as db:
         db.row_factory = aiosqlite.Row
         cursor = await db.execute(
-            "SELECT session_id, title, created_at FROM sessions ORDER BY created_at DESC LIMIT ?",
+            """SELECT s.session_id, s.title, s.created_at
+               FROM sessions s
+               WHERE EXISTS (SELECT 1 FROM messages m WHERE m.session_id = s.session_id)
+               ORDER BY s.created_at DESC LIMIT ?""",
             (limit,),
         )
         rows = await cursor.fetchall()
