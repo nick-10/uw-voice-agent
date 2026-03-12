@@ -67,6 +67,13 @@
     #micBtn:hover { background: #ce93d8; }
     #micBtn.active { background: #4caf50; animation: pulse 2s infinite; }
     #micBtn:disabled { background: #555; cursor: not-allowed; animation: none; }
+    #stopBtn {
+      width: 52px; height: 52px; border-radius: 50%; border: none;
+      background: #444; color: #e0e0e0; font-size: 1.2rem; cursor: pointer;
+      transition: all 0.2s; display: flex; align-items: center; justify-content: center;
+    }
+    #stopBtn:hover { background: #ff6b6b; color: #fff; }
+    #stopBtn:disabled { background: #2a2a2a; color: #555; cursor: not-allowed; }
     #status { font-size: 0.85rem; color: #888; min-height: 1.2em; margin-bottom: 1rem; }
     @keyframes pulse { 0%,100% { box-shadow: 0 0 0 0 rgba(76,175,80,0.4); } 50% { box-shadow: 0 0 0 15px rgba(76,175,80,0); } }
 
@@ -98,6 +105,7 @@
     <div id="chat"></div>
     <div id="controls">
       <button id="micBtn" class="mic-btn" onclick="toggleMic()">🎤</button>
+      <button id="stopBtn" onclick="stopOutput()" disabled title="Stop audio output">⏹</button>
     </div>
     <div id="status">Click mic to start conversation</div>
   </div>
@@ -109,6 +117,7 @@
     let viewingHistory = false;  // true when viewing a past session (read-only)
     const chat = document.getElementById('chat');
     const btn = document.getElementById('micBtn');
+    const stopBtn = document.getElementById('stopBtn');
     const status = document.getElementById('status');
     const sessionList = document.getElementById('session-list');
 
@@ -152,9 +161,11 @@
           setTimeout(loadSessions, 2000);
         } else if (msg.type === 'response_start') {
           agentSpeaking = true;
+          stopBtn.disabled = false;
           status.textContent = '🔊 Agent speaking... (talk to interrupt)';
         } else if (msg.type === 'response_end') {
           agentSpeaking = false;
+          stopBtn.disabled = true;
           if (micActive) status.textContent = '🎤 Listening...';
         } else if (msg.type === 'error') {
           addMsg('Error: ' + msg.message, 'agent');
@@ -185,6 +196,17 @@
       audioQueue = [];
       if (currentSource) { try { currentSource.stop(); } catch(e) {} currentSource = null; }
       playing = false;
+    }
+
+    function stopOutput() {
+      // Stop audio playback and tell server to stop sending more TTS chunks
+      stopPlayback();
+      if (ws?.readyState === 1) {
+        ws.send(JSON.stringify({ type: 'interrupt' }));
+      }
+      stopBtn.disabled = true;
+      agentSpeaking = false;
+      if (micActive) status.textContent = '🎤 Listening...';
     }
 
     // ─── Mic toggle ───
