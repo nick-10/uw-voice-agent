@@ -1,6 +1,7 @@
 """FastAPI conversation controller — always-on mic with pause detection & interruption."""
 
 import asyncio, json, re, traceback
+from contextlib import asynccontextmanager
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from fastapi.staticfiles import StaticFiles
 from google.adk import Runner
@@ -9,20 +10,28 @@ from google.genai import types
 
 from agent import agent
 from speech_services import ContinuousTranscriber, synthesize
+import database as db
 
-app = FastAPI()
 session_service = InMemorySessionService()
 runner = Runner(agent=agent, app_name="uw_voice_agent", session_service=session_service)
-_sessions: set[str] = set()
+_adk_sessions: set[str] = set()
 
 PAUSE_SECONDS = 1.5  # Wait this long after last final transcript before processing
 
 
-async def _ensure_session(user_id: str, session_id: str):
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    await db.init_db()
+    yield
+
+app = FastAPI(lifespan=lifespan)
+
+
+async def _ensure_adk_session(user_id: str, session_id: str):
     key = f"{user_id}:{session_id}"
-    if key not in _sessions:
+    if key not in _adk_sessions:
         await session_service.create_session(app_name="uw_voice_agent", user_id=user_id, session_id=session_id)
-        _sessions.add(key)
+        _adk_sessions.add(key)
 
 
 def _split_sentences(text: str) -> list[str]:
@@ -44,11 +53,73 @@ async def _safe_send_bytes(ws: WebSocket, data: bytes):
         pass
 
 
+async def _generate_title(session_id: str, first_message: str):
+    """Use Gemini to generate a ~3-word title for the session."""
+    try:
+        title_session_id = f"title_{session_id}"
+        await session_service.create_session(
+            app_name="uw_voice_agent", user_id="system", session_id=title_session_id
+        )
+
+        title_agent_runner = Runner(
+            agent=agent, app_name="uw_voice_agent", session_service=session_service
+        )
+
+        prompt = f'Summarize this message in exactly 2-3 words as a conversation title. Return ONLY the title, nothing else. Message: "{first_message}"'
+        title = ""
+        async for event in title_agent_runner.run_async(
+            user_id="system",
+            session_id=title_session_id,
+            new_message=types.UserContent(parts=[types.Part(text=prompt)]),
+        ):
+            if event.is_final_response() and event.content:
+                for part in event.content.parts:
+                    if part.text:
+                        title += part.text
+
+        title = title.strip().strip('"').strip("'")
+        if title:
+            await db.update_session_title(session_id, title)
+    except Exception:
+        traceback.print_exc()
+
+
+# ─── REST API for chat history ───────────────────────────────────────────
+
+@app.get("/api/sessions")
+async def list_sessions():
+    sessions = await db.get_sessions()
+    return {"sessions": sessions}
+
+
+@app.get("/api/sessions/{session_id}/messages")
+async def get_session_messages(session_id: str):
+    messages = await db.get_messages(session_id)
+    return {"messages": messages}
+
+
+@app.delete("/api/sessions/{session_id}")
+async def delete_session(session_id: str):
+    await db.delete_session(session_id)
+    return {"ok": True}
+
+
+# ─── WebSocket chat endpoint ────────────────────────────────────────────
+
 @app.websocket("/ws/chat")
 async def ws_chat(ws: WebSocket):
     await ws.accept()
-    user_id, session_id = "default", "default"
-    await _ensure_session(user_id, session_id)
+
+    # Create a new DB session for this connection
+    db_session_id = await db.create_session()
+    user_id = "web_user"
+
+    # Use the DB session ID for ADK too
+    adk_session_id = db_session_id
+    await _ensure_adk_session(user_id, adk_session_id)
+
+    # Tell the client what session they're in
+    await _safe_send_text(ws, json.dumps({"type": "session_id", "session_id": db_session_id}))
 
     loop = asyncio.get_event_loop()
     transcriber: ContinuousTranscriber | None = None
@@ -56,18 +127,27 @@ async def ws_chat(ws: WebSocket):
     agent_speaking = False
     accumulated_text = []
     debounce_task: asyncio.Task | None = None
+    is_first_message = True
 
     async def handle_agent(transcript: str):
         """Send transcript to agent, stream TTS audio back sentence by sentence."""
-        nonlocal agent_speaking
+        nonlocal agent_speaking, is_first_message
         interrupted.clear()
         agent_speaking = True
         await _safe_send_text(ws, json.dumps({"type": "response_start"}))
 
+        # Save user message to DB
+        await db.save_message(db_session_id, "user", transcript)
+
+        # Generate title from first message (fire-and-forget)
+        if is_first_message:
+            is_first_message = False
+            asyncio.create_task(_generate_title(db_session_id, transcript))
+
         agent_text = ""
         try:
             async for event in runner.run_async(
-                user_id=user_id, session_id=session_id,
+                user_id=user_id, session_id=adk_session_id,
                 new_message=types.UserContent(parts=[types.Part(text=transcript)]),
             ):
                 if interrupted.is_set():
@@ -81,6 +161,9 @@ async def ws_chat(ws: WebSocket):
             await _safe_send_text(ws, json.dumps({"type": "error", "message": str(e)}))
 
         if agent_text and not interrupted.is_set():
+            # Save agent message to DB
+            await db.save_message(db_session_id, "agent", agent_text)
+
             await _safe_send_text(ws, json.dumps({"type": "response_text", "text": agent_text}))
             for sentence in _split_sentences(agent_text):
                 if interrupted.is_set():
