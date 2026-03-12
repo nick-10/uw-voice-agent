@@ -59,29 +59,41 @@
     .agent { background: #2a2a2a; align-self: flex-start; border-bottom-left-radius: 0.25rem; }
     .interim { background: #1a1a2e; align-self: flex-end; border-bottom-right-radius: 0.25rem; opacity: 0.6; font-style: italic; }
     #controls { padding: 1.5rem; display: flex; gap: 1rem; align-items: center; }
+    .mic-group { display: flex; gap: 0.6rem; align-items: center; }
     button.mic-btn {
-      width: 80px; height: 80px; border-radius: 50%; border: none;
-      cursor: pointer; font-size: 1.8rem; transition: all 0.2s;
+      width: 72px; height: 72px; border-radius: 50%; border: 3px solid transparent;
+      cursor: pointer; font-size: 1.6rem; transition: all 0.2s;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      position: relative;
+    }
+    .mic-label {
+      font-size: 0.5rem; font-weight: 600; letter-spacing: 0.03em;
+      margin-top: 2px; text-transform: uppercase;
     }
     #micBtn { background: #b388ff; color: #0f0f0f; }
     #micBtn:hover { background: #ce93d8; }
-    #micBtn.active { background: #4caf50; animation: pulse 2s infinite; }
-    #micBtn:disabled { background: #555; cursor: not-allowed; animation: none; }
+    #micBtn.active { background: #4caf50; animation: pulse 2s infinite; border-color: #66bb6a; }
+    #micBtn:disabled { background: #555; cursor: not-allowed; animation: none; border-color: transparent; }
+    #pttBtn { background: #ff9800; color: #0f0f0f; }
+    #pttBtn:hover { background: #ffb74d; }
+    #pttBtn.recording { background: #f44336; color: #fff; animation: pttPulse 1s infinite; border-color: #ef5350; }
+    #pttBtn:disabled { background: #555; cursor: not-allowed; animation: none; border-color: transparent; }
     #stopBtn {
-      width: 52px; height: 52px; border-radius: 50%; border: none;
-      background: #444; color: #e0e0e0; font-size: 1.2rem; cursor: pointer;
+      width: 48px; height: 48px; border-radius: 50%; border: none;
+      background: #444; color: #e0e0e0; font-size: 1.1rem; cursor: pointer;
       transition: all 0.2s; display: flex; align-items: center; justify-content: center;
     }
     #stopBtn:hover { background: #ff6b6b; color: #fff; }
     #stopBtn:disabled { background: #2a2a2a; color: #555; cursor: not-allowed; }
     #submitBtn {
-      width: 52px; height: 52px; border-radius: 50%; border: none;
-      background: #444; color: #e0e0e0; font-size: 1.2rem; cursor: pointer;
+      width: 48px; height: 48px; border-radius: 50%; border: none;
+      background: #444; color: #e0e0e0; font-size: 1.1rem; cursor: pointer;
       transition: all 0.2s; display: flex; align-items: center; justify-content: center;
     }
     #submitBtn:hover { background: #4caf50; color: #fff; }
     #submitBtn:disabled { background: #2a2a2a; color: #555; cursor: not-allowed; }
     #submitBtn.submitted { background: #2e7d32; color: #fff; }
+    @keyframes pttPulse { 0%,100% { box-shadow: 0 0 0 0 rgba(244,67,54,0.5); } 50% { box-shadow: 0 0 0 12px rgba(244,67,54,0); } }
     .toast {
       position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%);
       background: #333; color: #e0e0e0; padding: 0.75rem 1.5rem; border-radius: 8px;
@@ -120,7 +132,14 @@
     <h1>🎙️ UW Voice Agent</h1>
     <div id="chat"></div>
     <div id="controls">
-      <button id="micBtn" class="mic-btn" onclick="toggleMic()">🎤</button>
+      <div class="mic-group">
+        <button id="micBtn" class="mic-btn" onclick="toggleMic()" title="Streaming: always-on mic with auto-send">
+          🎤<span class="mic-label">Stream</span>
+        </button>
+        <button id="pttBtn" class="mic-btn" onclick="togglePTT()" title="Push-to-Talk: press to record, press again to send">
+          🎙️<span class="mic-label">PTT</span>
+        </button>
+      </div>
       <button id="stopBtn" onclick="stopOutput()" disabled title="Stop audio output">⏹</button>
       <button id="submitBtn" onclick="submitSession()" title="Submit conversation to analytics">📤</button>
     </div>
@@ -130,11 +149,13 @@
 
   <script>
     let ws, audioCtx, workletNode, stream, micActive = false, agentSpeaking = false;
+    let pttRecording = false;  // true when PTT is actively recording
     let audioQueue = [], playing = false, interimDiv = null, currentSource = null;
     let currentSessionId = null;
     let viewingHistory = false;  // true when viewing a past session (read-only)
     const chat = document.getElementById('chat');
     const btn = document.getElementById('micBtn');
+    const pttBtn = document.getElementById('pttBtn');
     const stopBtn = document.getElementById('stopBtn');
     const status = document.getElementById('status');
     const sessionList = document.getElementById('session-list');
@@ -149,9 +170,10 @@
         if (!viewingHistory) setTimeout(connect, 1000);
       };
       ws.onopen = () => {
-        status.textContent = 'Connected — click mic to start';
+        status.textContent = 'Connected — choose Stream or PTT';
         viewingHistory = false;
         btn.disabled = false;
+        pttBtn.disabled = false;
       };
     }
 
@@ -184,7 +206,8 @@
         } else if (msg.type === 'response_end') {
           agentSpeaking = false;
           stopBtn.disabled = true;
-          if (micActive) status.textContent = '🎤 Listening...';
+          if (micActive) status.textContent = '🎤 Streaming — auto-sends on pause';
+          else if (!pttRecording) status.textContent = 'Connected — choose Stream or PTT';
         } else if (msg.type === 'error') {
           addMsg('Error: ' + msg.message, 'agent');
         }
@@ -227,59 +250,106 @@
       if (micActive) status.textContent = '🎤 Listening...';
     }
 
-    // ─── Mic toggle ───
+    // ─── Shared mic helpers ───
+    async function startAudioCapture(checkFlag) {
+      stream = await navigator.mediaDevices.getUserMedia({
+        audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true }
+      });
+      audioCtx = new AudioContext({ sampleRate: 16000 });
+      const source = audioCtx.createMediaStreamSource(stream);
+
+      const workletCode = `
+        class P extends AudioWorkletProcessor {
+          process(inputs) {
+            const ch = inputs[0][0];
+            if (ch) this.port.postMessage(ch);
+            return true;
+          }
+        }
+        registerProcessor('p', P);
+      `;
+      const blob = new Blob([workletCode], { type: 'application/javascript' });
+      const url = URL.createObjectURL(blob);
+      await audioCtx.audioWorklet.addModule(url);
+      URL.revokeObjectURL(url);
+
+      workletNode = new AudioWorkletNode(audioCtx, 'p');
+      workletNode.port.onmessage = (e) => {
+        if (!checkFlag() || ws?.readyState !== 1) return;
+        const f32 = e.data;
+        const i16 = new Int16Array(f32.length);
+        for (let i = 0; i < f32.length; i++)
+          i16[i] = Math.max(-32768, Math.min(32767, f32[i] * 32768));
+        ws.send(i16.buffer);
+      };
+      source.connect(workletNode);
+      workletNode.connect(audioCtx.destination);
+    }
+
+    function stopAudioCapture() {
+      if (workletNode) { workletNode.disconnect(); workletNode = null; }
+      if (audioCtx) { audioCtx.close(); audioCtx = null; }
+      if (stream) { stream.getTracks().forEach(t => t.stop()); stream = null; }
+    }
+
+    // ─── Streaming mic toggle ───
     async function toggleMic() {
-      if (viewingHistory) return;
+      if (viewingHistory || pttRecording) return;
       if (micActive) {
         micActive = false;
         btn.classList.remove('active');
-        btn.textContent = '🎤';
-        if (workletNode) { workletNode.disconnect(); workletNode = null; }
-        if (audioCtx) { audioCtx.close(); audioCtx = null; }
-        if (stream) { stream.getTracks().forEach(t => t.stop()); stream = null; }
-        status.textContent = 'Mic off — click to start';
+        btn.innerHTML = '🎤<span class="mic-label">Stream</span>';
+        stopAudioCapture();
+        pttBtn.disabled = false;  // Re-enable PTT
+        status.textContent = 'Connected — choose Stream or PTT';
         return;
       }
 
       try {
-        stream = await navigator.mediaDevices.getUserMedia({
-          audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true }
-        });
-        audioCtx = new AudioContext({ sampleRate: 16000 });
-        const source = audioCtx.createMediaStreamSource(stream);
-
-        const workletCode = `
-          class P extends AudioWorkletProcessor {
-            process(inputs) {
-              const ch = inputs[0][0];
-              if (ch) this.port.postMessage(ch);
-              return true;
-            }
-          }
-          registerProcessor('p', P);
-        `;
-        const blob = new Blob([workletCode], { type: 'application/javascript' });
-        const url = URL.createObjectURL(blob);
-        await audioCtx.audioWorklet.addModule(url);
-        URL.revokeObjectURL(url);
-
-        workletNode = new AudioWorkletNode(audioCtx, 'p');
-        workletNode.port.onmessage = (e) => {
-          if (!micActive || ws?.readyState !== 1) return;
-          const f32 = e.data;
-          const i16 = new Int16Array(f32.length);
-          for (let i = 0; i < f32.length; i++)
-            i16[i] = Math.max(-32768, Math.min(32767, f32[i] * 32768));
-          ws.send(i16.buffer);
-        };
-        source.connect(workletNode);
-        workletNode.connect(audioCtx.destination);
-
+        pttBtn.disabled = true;  // Disable PTT while streaming
+        await startAudioCapture(() => micActive);
         micActive = true;
         btn.classList.add('active');
-        btn.textContent = '🟢';
-        status.textContent = '🎤 Listening...';
+        btn.innerHTML = '🟢<span class="mic-label">Stream</span>';
+        status.textContent = '🎤 Streaming — auto-sends on pause';
       } catch (err) {
+        pttBtn.disabled = false;
+        status.textContent = 'Mic error: ' + err.message;
+      }
+    }
+
+    // ─── Push-to-Talk toggle ───
+    async function togglePTT() {
+      if (viewingHistory || micActive) return;
+
+      if (pttRecording) {
+        // ── Stop recording & send ──
+        pttRecording = false;
+        pttBtn.classList.remove('recording');
+        pttBtn.innerHTML = '🎙️<span class="mic-label">PTT</span>';
+        btn.disabled = false;  // Re-enable streaming
+
+        // Tell server to process immediately (no debounce)
+        if (ws?.readyState === 1) {
+          ws.send(JSON.stringify({ type: 'ptt_stop' }));
+        }
+
+        // Stop local mic
+        stopAudioCapture();
+        status.textContent = '⏳ Processing...';
+        return;
+      }
+
+      // ── Start recording ──
+      try {
+        btn.disabled = true;  // Disable streaming while PTT active
+        await startAudioCapture(() => pttRecording);
+        pttRecording = true;
+        pttBtn.classList.add('recording');
+        pttBtn.innerHTML = '⏺️<span class="mic-label">Send</span>';
+        status.textContent = '🔴 Recording — click PTT again to send';
+      } catch (err) {
+        btn.disabled = false;
         status.textContent = 'Mic error: ' + err.message;
       }
     }
@@ -363,9 +433,11 @@
       // Switch to history viewing mode
       viewingHistory = true;
 
-      // Turn off mic if active
+      // Turn off mic/PTT if active
       if (micActive) await toggleMic();
+      if (pttRecording) await togglePTT();
       btn.disabled = true;
+      pttBtn.disabled = true;
       status.textContent = '📖 Viewing past conversation';
 
       // Close active WebSocket (we'll reconnect on "New Chat")
@@ -404,9 +476,17 @@
 
     function startNewChat() {
       viewingHistory = false;
+      pttRecording = false;
+      micActive = false;
       clearChat();
       stopPlayback();
+      stopAudioCapture();
       btn.disabled = false;
+      btn.classList.remove('active');
+      btn.innerHTML = '🎤<span class="mic-label">Stream</span>';
+      pttBtn.disabled = false;
+      pttBtn.classList.remove('recording');
+      pttBtn.innerHTML = '🎙️<span class="mic-label">PTT</span>';
       status.textContent = 'Connecting...';
       currentSessionId = null;
 

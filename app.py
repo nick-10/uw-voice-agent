@@ -264,6 +264,21 @@ async def ws_chat(ws: WebSocket):
                 if data.get("type") == "interrupt":
                     interrupted.set()
                     accumulated_text = []
+                elif data.get("type") == "ptt_stop":
+                    # Push-to-talk: stop transcriber, cancel debounce, process immediately
+                    if transcriber:
+                        transcriber.stop()
+                        transcriber = None
+                    if debounce_task:
+                        debounce_task.cancel()
+                        debounce_task = None
+                    # Wait briefly for any final STT results to arrive
+                    await asyncio.sleep(0.3)
+                    if accumulated_text:
+                        full_text = " ".join(accumulated_text)
+                        accumulated_text = []
+                        if len(full_text.strip()) > 2:
+                            await handle_agent(full_text.strip())
     except WebSocketDisconnect:
         pass
     finally:
