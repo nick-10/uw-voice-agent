@@ -343,6 +343,10 @@
       // ── Start recording ──
       try {
         btn.disabled = true;  // Disable streaming while PTT active
+        // Tell server we're in PTT mode (don't debounce/auto-send)
+        if (ws?.readyState === 1) {
+          ws.send(JSON.stringify({ type: 'ptt_start' }));
+        }
         await startAudioCapture(() => pttRecording);
         pttRecording = true;
         pttBtn.classList.add('recording');
