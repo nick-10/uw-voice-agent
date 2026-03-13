@@ -167,7 +167,6 @@ async def ws_chat(ws: WebSocket):
     accumulated_text = []
     debounce_task: asyncio.Task | None = None
     is_first_message = True
-    ptt_mode = False  # When True, accumulate text without debounce (wait for ptt_stop)
 
     async def handle_agent(transcript: str):
         """Send transcript to agent, stream TTS audio back sentence by sentence."""
@@ -229,7 +228,7 @@ async def ws_chat(ws: WebSocket):
                 await handle_agent(full_text.strip())
 
     async def process_stt_results():
-        """Continuously read STT results, accumulate with debounce (or just accumulate in PTT mode)."""
+        """Continuously read STT results, accumulate with debounce."""
         nonlocal debounce_task, accumulated_text, agent_speaking
         while True:
             result = await transcriber.results.get()
@@ -246,11 +245,9 @@ async def ws_chat(ws: WebSocket):
 
                 accumulated_text.append(result["text"])
 
-                # In PTT mode, just accumulate — don't debounce or auto-send
-                if not ptt_mode:
-                    if debounce_task:
-                        debounce_task.cancel()
-                    debounce_task = asyncio.create_task(debounce_and_process())
+                if debounce_task:
+                    debounce_task.cancel()
+                debounce_task = asyncio.create_task(debounce_and_process())
 
     try:
         while True:
@@ -267,26 +264,6 @@ async def ws_chat(ws: WebSocket):
                 if data.get("type") == "interrupt":
                     interrupted.set()
                     accumulated_text = []
-                elif data.get("type") == "ptt_start":
-                    # Enter PTT mode: accumulate transcripts without debounce
-                    ptt_mode = True
-                    accumulated_text = []
-                elif data.get("type") == "ptt_stop":
-                    # Push-to-talk done: stop transcriber, process all accumulated text
-                    ptt_mode = False
-                    if transcriber:
-                        transcriber.stop()
-                        transcriber = None
-                    if debounce_task:
-                        debounce_task.cancel()
-                        debounce_task = None
-                    # Wait briefly for any final STT results to arrive
-                    await asyncio.sleep(0.3)
-                    if accumulated_text:
-                        full_text = " ".join(accumulated_text)
-                        accumulated_text = []
-                        if len(full_text.strip()) > 2:
-                            await handle_agent(full_text.strip())
     except WebSocketDisconnect:
         pass
     finally:
