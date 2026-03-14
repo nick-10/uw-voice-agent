@@ -173,6 +173,7 @@ async def ws_chat(ws: WebSocket):
         nonlocal agent_speaking, is_first_message
         interrupted.clear()
         agent_speaking = True
+        print(f"[handle_agent] START — sending response_start, transcript: {transcript[:80]}")
         await _safe_send_text(ws, json.dumps({"type": "response_start"}))
 
         # Save user message to DB
@@ -204,17 +205,26 @@ async def ws_chat(ws: WebSocket):
             await db.save_message(db_session_id, "agent", agent_text)
 
             await _safe_send_text(ws, json.dumps({"type": "response_text", "text": agent_text}))
-            for sentence in _split_sentences(agent_text):
+            sentences = _split_sentences(agent_text)
+            print(f"[handle_agent] TTS for {len(sentences)} sentence(s)")
+            for i, sentence in enumerate(sentences):
                 if interrupted.is_set():
+                    print(f"[handle_agent] interrupted before TTS sentence {i}")
                     break
                 try:
                     audio = await asyncio.to_thread(synthesize, sentence)
-                    if not interrupted.is_set():
-                        await _safe_send_bytes(ws, audio)
+                    if interrupted.is_set():
+                        print(f"[handle_agent] interrupted after TTS synthesis sentence {i}")
+                        break
+                    print(f"[handle_agent] sending audio chunk {i} ({len(audio)} bytes)")
+                    await _safe_send_bytes(ws, audio)
                 except Exception:
                     traceback.print_exc()
+        elif interrupted.is_set():
+            print(f"[handle_agent] interrupted before TTS — skipping audio")
 
         agent_speaking = False
+        print(f"[handle_agent] END — sending response_end")
         await _safe_send_text(ws, json.dumps({"type": "response_end"}))
 
     async def debounce_and_process():
@@ -237,8 +247,10 @@ async def ws_chat(ws: WebSocket):
             await _safe_send_text(ws, json.dumps({"type": "transcript", **result}))
 
             if result["is_final"] and len(result["text"].strip()) > 2:
+                print(f"[stt] final transcript: '{result['text'][:60]}' agent_speaking={agent_speaking}")
                 # If agent is currently speaking, interrupt it
                 if agent_speaking:
+                    print(f"[stt] setting interrupted (voice interrupt)")
                     interrupted.set()
                     accumulated_text = []
                     await asyncio.sleep(0.1)  # Let interruption propagate
@@ -262,6 +274,7 @@ async def ws_chat(ws: WebSocket):
             elif msg.get("text"):
                 data = json.loads(msg["text"])
                 if data.get("type") == "interrupt":
+                    print(f"[ws] interrupt received from client, agent_speaking={agent_speaking}")
                     interrupted.set()
                     accumulated_text = []
     except WebSocketDisconnect:
