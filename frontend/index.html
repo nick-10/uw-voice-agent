@@ -179,15 +179,16 @@
           if (msg.is_final) {
             removeInterim();
             addMsg(msg.text, 'user');
-            // Auto-interrupt: if agent is speaking and user said something, stop playback
-            if (agentSpeaking) {
-              stopPlayback();
+            // Auto-interrupt: if agent is speaking/playing and user said something,
+            // stop playback AND tell server to stop generating
+            if (agentSpeaking || playing) {
+              stopOutput();
             }
           } else {
             showInterim(msg.text);
-            // Even interim speech should interrupt agent audio so user can be heard
-            if (agentSpeaking) {
-              stopPlayback();
+            // Even interim speech should interrupt agent audio
+            if (agentSpeaking || playing) {
+              stopOutput();
             }
           }
         } else if (msg.type === 'response_text') {
@@ -200,9 +201,12 @@
           status.textContent = '🔊 Agent speaking... (talk to interrupt)';
         } else if (msg.type === 'response_end') {
           agentSpeaking = false;
-          stopBtn.disabled = true;
-          if (micActive) status.textContent = '🎤 Listening — auto-sends on pause';
-          else status.textContent = 'Connected — click mic to start';
+          // Only disable stop if audio is done playing too
+          if (!playing) {
+            stopBtn.disabled = true;
+            if (micActive) status.textContent = '🎤 Listening — auto-sends on pause';
+            else status.textContent = 'Connected — click mic to start';
+          }
         } else if (msg.type === 'error') {
           addMsg('Error: ' + msg.message, 'agent');
         }
@@ -211,7 +215,16 @@
 
     // ─── Audio playback ───
     async function playNextChunk() {
-      if (audioQueue.length === 0) { playing = false; return; }
+      if (audioQueue.length === 0) {
+        playing = false;
+        // Playback finished — disable stop button if server is also done
+        if (!agentSpeaking) {
+          stopBtn.disabled = true;
+          if (micActive) status.textContent = '🎤 Listening — auto-sends on pause';
+          else status.textContent = 'Connected — click mic to start';
+        }
+        return;
+      }
       playing = true;
       const buf = audioQueue.shift();
       try {
