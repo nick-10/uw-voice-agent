@@ -139,6 +139,7 @@
   <script>
     let ws, audioCtx, workletNode, stream, micActive = false, agentSpeaking = false;
     let audioQueue = [], playing = false, interimDiv = null, currentSource = null;
+    let playbackStopped = false;  // true after stop/interrupt; prevents queuing in-flight audio
     let currentSessionId = null;
     let viewingHistory = false;  // true when viewing a past session (read-only)
     const chat = document.getElementById('chat');
@@ -165,6 +166,7 @@
 
     function handleMessage(e) {
       if (e.data instanceof ArrayBuffer) {
+        if (playbackStopped) return;  // Ignore in-flight audio after stop/interrupt
         audioQueue.push(e.data);
         if (!playing) playNextChunk();
       } else {
@@ -193,6 +195,7 @@
           setTimeout(loadSessions, 2000);
         } else if (msg.type === 'response_start') {
           agentSpeaking = true;
+          playbackStopped = false;
           stopBtn.disabled = false;
           status.textContent = '🔊 Agent speaking... (talk to interrupt)';
         } else if (msg.type === 'response_end') {
@@ -226,6 +229,7 @@
     }
 
     function stopPlayback() {
+      playbackStopped = true;
       audioQueue = [];
       if (currentSource) { try { currentSource.stop(); } catch(e) {} currentSource = null; }
       playing = false;
